@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"simple-productapi/models"
 	"simple-productapi/repository"
+
 	"strconv"
 
 	"github.com/labstack/echo/v4"
@@ -191,6 +192,13 @@ func PatchProduct(c echo.Context) error {
 	if pIndex != -1 {
 		switch method {
 		case "add-stock":
+			if p.Quantity == 0 {
+        return c.JSON(http.StatusNotFound, models.ErrorResponse{
+          Code: http.StatusNotFound,
+          Message: "Patch update product failed",
+          Error: "Invalid payload request",
+        })
+      }
 			repo.db[pIndex].Quantity = repo.db[pIndex].Quantity + p.Quantity
 			productRes := models.ProductResponse{
 				Id: repo.db[pIndex].Id,
@@ -204,6 +212,13 @@ func PatchProduct(c echo.Context) error {
 				Data: productRes,
 			})
 		case "reduce-stock":
+			if p.Quantity == 0 {
+        return c.JSON(http.StatusNotFound, models.ErrorResponse{
+          Code: http.StatusNotFound,
+          Message: "Patch update product failed",
+          Error: "Invalid payload request",
+        })
+      }
 			repo.db[pIndex].Quantity = repo.db[pIndex].Quantity - p.Quantity
 			productRes := models.ProductResponse{
 				Id: repo.db[pIndex].Id,
@@ -217,6 +232,13 @@ func PatchProduct(c echo.Context) error {
 				Data: productRes,
 			})
 		case "update-price":
+			if p.Price == 0 {
+        return c.JSON(http.StatusNotFound, models.ErrorResponse{
+          Code: http.StatusNotFound,
+          Message: "Patch update product failed",
+          Error: "Invalid payload request",
+        })
+      }
 			repo.db[pIndex].Price = p.Price
 			productRes := models.ProductResponse{
 				Id: repo.db[pIndex].Id,
@@ -237,7 +259,6 @@ func PatchProduct(c echo.Context) error {
 		Error: "Product not found",
 	})
 }
-
 func DeleteProduct(c echo.Context) error {
 	intid, _ := strconv.Atoi(c.Param("id"))
 	pIndex := repo.IndexOf(intid)
@@ -250,11 +271,11 @@ func DeleteProduct(c echo.Context) error {
 			Data: "Deleted product ID:" + c.Param("id"),
 		})
 	} 
-	return c.JSON(http.StatusNotFound, c.JSON(http.StatusNotFound, models.ErrorResponse{
+	return c.JSON(http.StatusNotFound, models.ErrorResponse{
 		Code: http.StatusNotFound,
 		Message: "Delete product failed",
 		Error: "Product not found or does not exist",
-	}))
+	})
 }
 
 func (repo ProductRepo) FindById(id int) models.Product {
