@@ -1,7 +1,7 @@
 package main
 
 import (
-	"simple-productapi-golang/service"
+	"simple-productapi/service"
 
 	"github.com/labstack/echo/v4"
 )

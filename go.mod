@@ -1,4 +1,4 @@
-module simple-productapi-golang
+module simple-productapi
 
 go 1.18
 
